@@ -89,7 +89,6 @@ export default {
     font-weight: bold;
     box-sizing: border-box;
     padding-top: 20px;
-    line-height: 40px;
 }
 
 
