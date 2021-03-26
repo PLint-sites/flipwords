@@ -1,5 +1,9 @@
 <template>
-    <div class="box" :class="word.type" @click="select" :style="doosStyle">{{ word.word }}</div>
+    <div class="box" @click="select" :style="doosStyle">
+        {{ word.word }}
+        <div v-if="word.correct === true">&#10004;</div>
+        <div v-if="word.correct === false">&times;</div>
+    </div>
 </template>
 
 <script>
@@ -10,14 +14,39 @@ export default {
     props: ['word'],
     data() {
         return {
+            colors: {
+                orange: '#FFB74D',
+                orangedark: '#EF6C00',
+                blue: '#039BE5',
+                bluedark: '#0277BD',
+                green: '#43A047',
+                red: '#E53935',
+            },
             boxRotateY: 0,
         }
     },
     computed: {
         doosStyle() {
+            let backgroundColor = this.colors.orange
+            if (this.word.type === 'en') {
+                backgroundColor = this.colors.blue
+            }
+            if (this.word.selected) {
+                backgroundColor = this.colors['orangedark']
+                if (this.word.type === 'en') {
+                    backgroundColor = this.colors['bluedark']
+                }
+            }
+            if (this.word.correct === true) {
+                backgroundColor = this.colors.green
+            }
+            if (this.word.correct === false) {
+                backgroundColor = this.colors.red
+            }
             return {
+                color: '#ffffff',
                 transform: `rotateY(${this.boxRotateY}deg)`,
-                background: (this.word.selected) ? 'purple' : ''
+                '--bg-color': backgroundColor,
             }
         },
 
@@ -51,26 +80,16 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@orange: #FFB74D;
-@orangedark: #EF6C00;
-@blue: #039BE5;
-@bluedark: #0277BD;
-@green: #43A047;
-@red: #E53935;
+
 
 .box {
     height: 80px;  
-    border: 1px solid @orange;
-    background: @orange;
+    border: 1px solid var(--bg-color);
+    background: var(--bg-color);
     font-weight: bold;
     box-sizing: border-box;
     padding-top: 20px;
     line-height: 40px;
-
-    &.en {
-        border: 1px solid @blue;
-        background: @blue;
-    }
 }
 
 

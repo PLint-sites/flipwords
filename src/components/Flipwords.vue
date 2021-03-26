@@ -100,39 +100,42 @@ export default {
     },
     async selectWord(i) {
       if (this.numberSelectedBoxes < 2) {
-        this.selectedBoxes.push(this.flattenedWords[i])
-        this.flattenedWords[i].selected = true
+        // check if [i] not in selectedBoxes
+        if (this.selectedBoxes.length === 0 || this.selectedBoxes.findIndex(word => word.word === this.flattenedWords[i].word) === -1) {
+          this.selectedBoxes.push(this.flattenedWords[i])
+          this.flattenedWords[i].selected = true
 
-        if (this.numberSelectedBoxes === 2) {
-          // start flipping
-          this.flattenedWords = this.flattenedWords.map(word => ({...word, flipping: word.selected}))
+          if (this.numberSelectedBoxes === 2) {
+            // start flipping
+            this.flattenedWords = this.flattenedWords.map(word => ({...word, flipping: word.selected}))
 
-          // check if correct
-          if (this.isCombiWorthChecking) {
+            // check if correct
+            if (this.isCombiWorthChecking) {
 
-            if (this.isCombiCorrect) {
-              await this.waitFor()
-              this.flattenedWords = this.flattenedWords.map(word => ({...word, correct: (word.flipping ? true : null)}))
-              this.points++
+              if (this.isCombiCorrect) {
+                await this.waitFor()
+                this.flattenedWords = this.flattenedWords.map(word => ({...word, correct: (word.flipping ? true : null)}))
+                this.points++
 
-              // na een timeout van 1 seconde, verwijder woorden uit het grid
-              await this.waitFor(1000)
-              this.flattenedWords = this.flattenedWords.filter(word => !word.correct)
+                // na een timeout van 1 seconde, verwijder woorden uit het grid
+                await this.waitFor(1000)
+                this.flattenedWords = this.flattenedWords.filter(word => !word.correct)
 
-              // clear selected boxes
-              this.selectedBoxes = []
+                // clear selected boxes
+                this.selectedBoxes = []
 
-            } else {
-              await this.waitFor()
-              this.flattenedWords = this.flattenedWords.map(word => ({...word, correct: (word.flipping ? false : null)}))
-              this.lives--
-              // flip back
-              await this.waitFor(1000)
-              this.flattenedWords = this.flattenedWords.map(word => ({...word, flipping: false, selected: false, correct: null}))
-              this.selectedBoxes = []
+              } else {
+                await this.waitFor()
+                this.flattenedWords = this.flattenedWords.map(word => ({...word, correct: (word.flipping ? false : null)}))
+                this.lives--
+                // flip back
+                await this.waitFor(1000)
+                this.flattenedWords = this.flattenedWords.map(word => ({...word, flipping: false, selected: false, correct: null}))
+                this.selectedBoxes = []
+              }
             }
           }
-        }
+        } 
       }
     },
     randomPickFromList() {
