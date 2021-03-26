@@ -8,17 +8,22 @@
       <span>Points: {{ points }}</span>
     </div>
     <div v-if="flattenedWords.length" class="grid">
-      <FlipWord v-for="i in numberWordsRemaining" :key="`box_${i}`" :word="flattenedWords[i-1]" @selected="selectWord(i-1)"/>
+      <FlipBox v-for="i in numberWordsRemaining" 
+        :key="`box_${i}`" 
+        :word="flattenedWords[i-1]" 
+        @selected="selectWord(i-1)"
+      />
     </div>
   </div>
 </template>
 
 <script>
 import words from '@/words/list'
-import FlipWord from './FlipWord'
+import FlipBox from './FlipBox'
+
 export default {
   name: 'Flipwords',
-  components: {FlipWord},
+  components: {FlipBox},
   props: {
     msg: String
   },
@@ -31,7 +36,7 @@ export default {
       flattenedWords: [],
       selectedBoxes: [],
       lives: 3,
-      points: 0
+      points: 0,
     }
   },
   computed: {
@@ -88,7 +93,7 @@ export default {
     shuffle(array) {
       return array.sort(() => Math.random() - 0.5);
     },
-    waitFor(delay = 1000) {
+    waitFor(delay = 500) {
       return new Promise((resolve, reject) => {
         setTimeout(resolve, delay)
       })
@@ -111,7 +116,7 @@ export default {
               this.points++
 
               // na een timeout van 1 seconde, verwijder woorden uit het grid
-              await this.waitFor(2000)
+              await this.waitFor(1000)
               this.flattenedWords = this.flattenedWords.filter(word => !word.correct)
 
               // clear selected boxes
@@ -122,7 +127,7 @@ export default {
               this.flattenedWords = this.flattenedWords.map(word => ({...word, correct: (word.flipping ? false : null)}))
               this.lives--
               // flip back
-              await this.waitFor(2000)
+              await this.waitFor(1000)
               this.flattenedWords = this.flattenedWords.map(word => ({...word, flipping: false, selected: false, correct: null}))
               this.selectedBoxes = []
             }
@@ -143,6 +148,19 @@ export default {
 
 <style scoped lang="less">
 @orange: #FFB74D;
+
+#doos {
+  background: @orange;
+  width: 150px;
+  height: 120px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 20px;
+  padding-top: 35px;
+  box-sizing: border-box;
+  font-weight: bold;
+}
+
 a {
   color: #42b983;
 }
