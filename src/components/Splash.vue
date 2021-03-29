@@ -20,7 +20,5 @@ export default {
     color: #FFB74D;
     left: 0;
     font-weight: bold;
-
-    
 }
 </style>

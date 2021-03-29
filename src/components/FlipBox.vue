@@ -1,8 +1,6 @@
 <template>
-    <div class="box" @click="select" :style="doosStyle">
-        {{ word.word }}
-        <div v-if="word.correct === true">&#10004;</div>
-        <div v-if="word.correct === false">&times;</div>
+    <div class="box" :class="word.correct === true ? 'correct' : word.correct === false ? 'incorrect' : ''" @click="select" :style="doosStyle">
+        <span>{{ word.word }}</span>
     </div>
 </template>
 
@@ -80,16 +78,38 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
-
 .box {
     height: 80px;  
     border: 1px solid var(--bg-color);
     background: var(--bg-color);
     font-weight: bold;
     box-sizing: border-box;
-    padding-top: 20px;
+    
+    display: grid;
+    grid-template-rows: 1fr;
+    align-items: center;
+
+    &.correct, &.incorrect {
+        span {
+            opacity: 0.5;
+        }
+
+        &::after {
+            position: absolute;
+            content: '\2713';
+            color: #fff;
+            left: 50%;
+            top: 50%;
+            margin-top: -30px;
+            margin-left: -14px;
+            font-size: 50px;
+        }
+    }
+
+    &.incorrect::after {
+        content: '\00D7';
+        margin-top: -33px;
+    }
+
 }
-
-
 </style>

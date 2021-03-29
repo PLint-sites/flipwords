@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Flipwords msg="Flip the words"/>
+    <Flipwords msg="Flip Words"/>
   </div>
 </template>
 

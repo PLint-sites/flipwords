@@ -1,27 +1,37 @@
 <template>
   <div>
-    <h1>{{ msg }}</h1>
-    <h3>Hoe goed is je engels dan?</h3>
-    <p>Klik een blauw (engels) en oranje (nederlands) woord aan om ze te laten flippen! Heb je het goed? Dan verdwijnen ze.</p>
-    <div id="scoreboard">
-      <span>Lives: {{ lives }}</span>
-      <span>Points: {{ points }}</span>
-    </div>
-    <div v-if="flattenedWords.length" class="grid">
-      <FlipBox v-for="i in numberWordsRemaining" 
-        :key="`box_${i}`" 
-        :word="flattenedWords[i-1]" 
-        @selected="selectWord(i-1)"
-      />
+    <Splash v-if="showStartUp">
+      <div class="splashscreen" id="startup">
+        <h1>{{ msg }}</h1>
+        <p>
+          Zoek de Engelse en Nederlandse woorden bij elkaar en haal zo veel mogelijk punten. <br><br>
+          Klik een blauw (Engels) en oranje (Nederlands) woord aan om ze te laten flippen!
+        </p>
+        <button type="button" @click="start">Start game</button>
+      </div>
+    </Splash>
+    <div v-else>
+      <h1>{{ msg }}</h1>
+      <div id="scoreboard">
+        <span>Lives: {{ lives }}</span>
+        <span>Points: {{ points }}</span>
+      </div>
+      <div v-if="flattenedWords.length" class="grid">
+        <FlipBox v-for="i in numberWordsRemaining" 
+          :key="`box_${i}`" 
+          :word="flattenedWords[i-1]" 
+          @selected="selectWord(i-1)"
+        />
+      </div>
     </div>
     <Splash v-if="showNewLevel">
-      <div id="levelup">
+      <div class="splashscreen" id="levelup">
         LEVEL UP <span id="level">{{ level }}</span>
       </div>
     </Splash>
 
     <Splash v-if="showGameOver">
-      <div id="gameover">
+      <div class="splashscreen" id="gameover">
         GAME OVER
         <button type="button" @click="reset">Play again?</button>
       </div>
@@ -34,7 +44,7 @@ import words from '@/words/list'
 import FlipBox from './FlipBox'
 import Splash from './Splash'
 
-const NUMBER_OF_STARTING_LIVES = 1
+const NUMBER_OF_STARTING_LIVES = 10
 
 export default {
   name: 'Flipwords',
@@ -54,6 +64,7 @@ export default {
       lives: NUMBER_OF_STARTING_LIVES,
       points: 0,
       level: 1,
+      showStartUp: true,
       showNewLevel: false,
       showGameOver: false,
     }
@@ -177,6 +188,9 @@ export default {
         } 
       }
     },
+    async start() {
+      this.showStartUp = false
+    },
     async levelUp() {
       this.level++
       // Animate: `Level up: ${this.level}`
@@ -234,9 +248,8 @@ a {
   color: #42b983;
 }
 
-h3 {
+h1 {
   border-bottom: double 3px @orange;
-  display: inline;
 }
 
 .grid {
@@ -264,24 +277,12 @@ h3 {
   }
 }
 
-#levelup, #gameover {
+.splashscreen {
   position: relative;
   top: 44%;
   margin-top: -30px;
   font-size: 30px;
   letter-spacing: 2px;
-
-  #level {
-    position: relative;
-    color: #039BE5;
-    font-size: 80px;
-    margin-left: 10px;
-    top: 11px;
-  }
-}
-
-#gameover {
-  color: #E53935;
 
   button {
     display: block;
@@ -298,4 +299,28 @@ h3 {
   }
 }
 
+#levelup #level {
+  position: relative;
+  color: #039BE5;
+  font-size: 80px;
+  margin-left: 10px;
+  top: 11px;
+}
+
+#gameover {
+  color: #E53935;
+}
+
+#startup {
+  top: 5%;
+  padding: 20px;
+
+  h1 {
+    font-size: 40px;
+  }
+
+  p {
+    font-size: 18px;
+  }
+}
 </style>
