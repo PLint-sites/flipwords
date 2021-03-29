@@ -23,6 +23,7 @@
           @selected="selectWord(i-1)"
         />
       </div>
+      <h3>Level {{ level }}</h3>
     </div>
     <Splash v-if="showNewLevel">
       <div class="splashscreen" id="levelup">
@@ -44,7 +45,7 @@ import words from '@/words/list'
 import FlipBox from './FlipBox'
 import Splash from './Splash'
 
-const NUMBER_OF_STARTING_LIVES = 10
+const NUMBER_OF_STARTING_LIVES = 3
 
 export default {
   name: 'Flipwords',
@@ -250,10 +251,11 @@ a {
 
 h1 {
   border-bottom: double 3px @orange;
+  margin-bottom: 15px;
 }
 
 .grid {
-  margin-top: 10px;
+  margin-top: 15px;
   padding: 0 20px;
   width: 100%;
   display: grid;
@@ -321,6 +323,10 @@ h1 {
 
   p {
     font-size: 18px;
+  }
+
+  button {
+    margin-top: 25px;
   }
 }
 </style>
