@@ -14,18 +14,31 @@
         @selected="selectWord(i-1)"
       />
     </div>
-    <LevelUpSplash v-if="showNewLevelSplash" :level="level"/>
+    <Splash v-if="showNewLevel">
+      <div id="levelup">
+        LEVEL UP <span id="level">{{ level }}</span>
+      </div>
+    </Splash>
+
+    <Splash v-if="showGameOver">
+      <div id="gameover">
+        GAME OVER
+        <button type="button" @click="reset">Play again?</button>
+      </div>
+    </Splash>
   </div>
 </template>
 
 <script>
 import words from '@/words/list'
 import FlipBox from './FlipBox'
-import LevelUpSplash from './LevelUpSplash'
+import Splash from './Splash'
+
+const NUMBER_OF_STARTING_LIVES = 1
 
 export default {
   name: 'Flipwords',
-  components: {FlipBox, LevelUpSplash},
+  components: {FlipBox, Splash},
   props: {
     msg: String
   },
@@ -38,10 +51,11 @@ export default {
       },
       flattenedWords: [],
       selectedBoxes: [],
-      lives: 3,
+      lives: NUMBER_OF_STARTING_LIVES,
       points: 0,
       level: 1,
-      showNewLevelSplash: false,
+      showNewLevel: false,
+      showGameOver: false,
     }
   },
   computed: {
@@ -128,15 +142,22 @@ export default {
       await this.waitFor()
       this.flattenedWords = this.flattenedWords.map(word => ({...word, correct: (word.flipping ? false : null)}))
       this.lives--
-      // flip back
-      await this.waitFor(1000)
-      this.flattenedWords = this.flattenedWords.map(word => ({...word, flipping: false, selected: false, correct: null}))
-      this.selectedBoxes = []
+
+      if (this.lives > 0) {
+        // flip back
+        await this.waitFor(1000)
+        this.flattenedWords = this.flattenedWords.map(word => ({...word, flipping: false, selected: false, correct: null}))
+        this.selectedBoxes = []
+      } else {
+        this.showGameOver = true
+      }
     },
     selectWord(i) {
       if (this.numberSelectedBoxes < 2) {
         // check if [i] not in selectedBoxes
-        if (this.selectedBoxes.length === 0 || this.selectedBoxes.findIndex(word => word.word === this.flattenedWords[i].word) === -1) {
+        
+        // Only continue if this is the first box or, if second box, it is not the same or from same type
+        if (this.selectedBoxes.length === 0 || (this.selectedBoxes.length === 1 && this.selectedBoxes[0].type !== this.flattenedWords[i].type)) {
           this.markWordAsSelected(i)
 
           if (this.numberSelectedBoxes === 2) {
@@ -159,11 +180,19 @@ export default {
     async levelUp() {
       this.level++
       // Animate: `Level up: ${this.level}`
-      this.showNewLevelSplash = true
+      this.showNewLevel = true
       await this.waitFor(2000)
-      this.showNewLevelSplash = false
+      this.showNewLevel = false
 
       // init arrays again
+      this.init()
+    },
+    async reset() {
+      await this.waitFor()
+      this.showGameOver = false
+      this.lives = NUMBER_OF_STARTING_LIVES
+      this.points = 0
+      this.selectedBoxes = []
       this.init()
     },
     randomPickFromList() {
@@ -232,6 +261,40 @@ h3 {
   span {
     text-transform: capitalize;
     font-weight: bold;
+  }
+}
+
+#levelup, #gameover {
+  position: relative;
+  top: 44%;
+  margin-top: -30px;
+  font-size: 30px;
+  letter-spacing: 2px;
+
+  #level {
+    position: relative;
+    color: #039BE5;
+    font-size: 80px;
+    margin-left: 10px;
+    top: 11px;
+  }
+}
+
+#gameover {
+  color: #E53935;
+
+  button {
+    display: block;
+    background: #039BE5;
+    padding: 10px 16px;
+    border: 1px solid #0277BD;
+    margin-left: auto;
+    margin-right: auto;
+    width: 150px;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 10px;
   }
 }
 
