@@ -1,4 +1,4 @@
-# flip-word-hep
+# flip-words
 
 ## Project setup
 ```
