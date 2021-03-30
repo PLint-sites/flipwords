@@ -1,42 +1,55 @@
 <template>
   <div>
-    <Splash v-if="showStartUp">
+    <Splash v-if="gameCompleted">
       <div class="splashscreen" id="startup">
+        <h1>Well done!</h1>
+        <div style="width:100%;height:0;padding-bottom:45%;position:relative;">
+          <iframe src="https://giphy.com/embed/zGnnFpOB1OjMQ" width="100%" height="100%" style="position:absolute; left:0; width:100%; box-sizing:border-box;" frameBorder="0" class="giphy-embed" allowFullScreen>
+          </iframe>
+        </div>
+        <p>You completed all words!</p>
+        <h2>Score: {{ points }}</h2>
+      </div>
+    </Splash>
+    <template v-else>
+        <Splash v-if="showStartUp">
+        <div class="splashscreen" id="startup">
+          <h1>{{ msg }}</h1>
+          <p>
+            Zoek de Engelse en Nederlandse woorden bij elkaar en haal zo veel mogelijk punten. <br><br>
+            Klik een blauw (Engels) en oranje (Nederlands) woord aan om ze te laten flippen!
+          </p>
+          <button type="button" @click="start">Start game</button>
+        </div>
+      </Splash>
+      <div v-else>
         <h1>{{ msg }}</h1>
-        <p>
-          Zoek de Engelse en Nederlandse woorden bij elkaar en haal zo veel mogelijk punten. <br><br>
-          Klik een blauw (Engels) en oranje (Nederlands) woord aan om ze te laten flippen!
-        </p>
-        <button type="button" @click="start">Start game</button>
+        <div id="scoreboard">
+          <span>Lives: {{ lives }}</span>
+          <span>Points: {{ points }}</span>
+        </div>
+        <div v-if="flattenedWords.length" class="grid">
+          <FlipBox v-for="i in numberWordsRemaining" 
+            :key="`box_${i}`" 
+            :word="flattenedWords[i-1]" 
+            @selected="selectWord(i-1)"
+          />
+        </div>
+        <h3>Level {{ level }}</h3>
       </div>
-    </Splash>
-    <div v-else>
-      <h1>{{ msg }}</h1>
-      <div id="scoreboard">
-        <span>Lives: {{ lives }}</span>
-        <span>Points: {{ points }}</span>
-      </div>
-      <div v-if="flattenedWords.length" class="grid">
-        <FlipBox v-for="i in numberWordsRemaining" 
-          :key="`box_${i}`" 
-          :word="flattenedWords[i-1]" 
-          @selected="selectWord(i-1)"
-        />
-      </div>
-      <h3>Level {{ level }}</h3>
-    </div>
-    <Splash v-if="showNewLevel">
-      <div class="splashscreen" id="levelup">
-        LEVEL UP <span id="level">{{ level }}</span>
-      </div>
-    </Splash>
+      <Splash v-if="showNewLevel">
+        <div class="splashscreen" id="levelup">
+          LEVEL UP <span id="level">{{ level }}</span>
+        </div>
+      </Splash>
 
-    <Splash v-if="showGameOver">
-      <div class="splashscreen" id="gameover">
-        GAME OVER
-        <button type="button" @click="reset">Play again?</button>
-      </div>
-    </Splash>
+      <Splash v-if="showGameOver">
+        <div class="splashscreen" id="gameover">
+          GAME OVER
+          <button type="button" @click="reset">Play again?</button>
+        </div>
+      </Splash>
+    </template>
   </div>
 </template>
 
@@ -68,6 +81,7 @@ export default {
       showStartUp: true,
       showNewLevel: false,
       showGameOver: false,
+      gameCompleted: false,
     }
   },
   computed: {
@@ -146,6 +160,10 @@ export default {
       this.selectedBoxes = []
 
       // continue if level completed
+      if (this.flattenedWords.length === 0 && this.allTheWords.length === 0) {
+        this.gameCompleted = true
+      }
+
       if (this.flattenedWords.length === 0) {
         this.levelUp()
       }
