@@ -1,5 +1,5 @@
 <template>
-    <div id="container">
+    <div id="splash-container">
         <slot></slot>
     </div>
 </template>
@@ -11,7 +11,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-#container {
+#splash-container {
     position: absolute;
     top: 0;
     background: #333;

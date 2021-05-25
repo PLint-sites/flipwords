@@ -1,21 +1,27 @@
 <template>
   <div id="app">
-    <Flipwords msg="Flip Words"/>
+    <Demo/>
   </div>
 </template>
 
 <script>
-import Flipwords from './components/Flipwords.vue'
+import Demo from './Demo.vue'
 
 export default {
   name: 'App',
   components: {
-    Flipwords
+    Demo
   }
 }
 </script>
 
 <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
