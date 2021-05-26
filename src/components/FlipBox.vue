@@ -79,7 +79,7 @@ export default {
 
 <style lang="less" scoped>
 .box {
-    height: 80px;  
+    height: calc((100vh - 160px)/5);
     border: 1px solid var(--bg-color);
     background: var(--bg-color);
     font-weight: bold;

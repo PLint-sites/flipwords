@@ -21,4 +21,10 @@ export default {
     left: 0;
     font-weight: bold;
 }
+
+@media (min-width: 600px) {
+    #splash-container {
+        height: 100%;
+    }
+}
 </style>

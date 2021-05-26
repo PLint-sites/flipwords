@@ -2,7 +2,7 @@
     <div id="demo">
         <div id="phone">
             <div id="container">
-                <Flipwords msg="Flip Words"/>
+                <Flipwords/>
             </div>
         </div>
     </div>
@@ -24,10 +24,15 @@ export default {
     place-items: center;
     height: 100vh;
 
+    #phone {
+        width: 100%;
+        height: 100%;
+    }
+
     #container {
         width: 100%;
         height: 100%;
-        background: #efefef;
+        background: #fff;
         position: relative;
         overflow-y: hidden;
     }

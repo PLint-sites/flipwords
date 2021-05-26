@@ -23,7 +23,7 @@
         </div>
       </Splash>
       <div v-else>
-        <h1>{{ msg }}</h1>
+        <h1>Flip Words</h1>
         <div id="scoreboard">
           <span>Lives: {{ lives }}</span>
           <span>Points: {{ points }}</span>
@@ -63,9 +63,6 @@ const NUMBER_OF_STARTING_LIVES = 3
 export default {
   name: 'Flipwords',
   components: {FlipBox, Splash},
-  props: {
-    msg: String
-  },
   data() {
     return {
       allTheWords: words,
@@ -268,17 +265,20 @@ a {
 }
 
 h1 {
+  font-size: 28px;
+  padding: 7px 0;
   border-bottom: double 3px @orange;
-  margin-bottom: 15px;
+  margin-bottom: 7px;
 }
 
 .grid {
-  margin-top: 15px;
+  margin-top: 7px;
+  margin-bottom: 7px;
   padding: 0 20px;
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr;  
-  grid-gap: 10px;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 7px;
   box-sizing: border-box;
   align-items: center;
 }
@@ -345,6 +345,19 @@ h1 {
 
   button {
     margin-top: 25px;
+  }
+}
+
+@media (min-width: 600px) {
+  h1 {
+    font-size: 28px;
+    padding: 7px 0;
+    margin-bottom: 7px;
+  }
+
+  .grid {
+    margin-top: 7px;
+    margin-bottom: 7px;
   }
 }
 </style>
