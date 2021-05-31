@@ -66,4 +66,12 @@ export default {
     }
 }
 
+/* Voor landscape mobile devices */
+@media (min-width: 600px) and (max-height: 703px) {
+    #demo {
+        height: auto;
+        padding: 10px 0;
+    }
+}
+
 </style>
