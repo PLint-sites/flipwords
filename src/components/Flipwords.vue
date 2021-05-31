@@ -14,7 +14,7 @@
     <template v-else>
         <Splash v-if="showStartUp">
         <div class="splashscreen" id="startup">
-          <h1>{{ msg }}</h1>
+          <h1>Flip Words</h1>
           <p>
             Zoek de Engelse en Nederlandse woorden bij elkaar en haal zo veel mogelijk punten. <br><br>
             Klik een blauw (Engels) en oranje (Nederlands) woord aan om ze te laten flippen!
@@ -298,22 +298,21 @@ h1 {
 }
 
 .splashscreen {
+  padding: 0 20px;  
   position: relative;
-  top: 44%;
-  margin-top: -30px;
   font-size: 30px;
   letter-spacing: 2px;
 
   button {
     display: block;
     background: #039BE5;
-    padding: 10px 16px;
+    padding: 12px 20px;
     border: 1px solid #0277BD;
     margin-left: auto;
     margin-right: auto;
-    width: 150px;
+    width: 200px;
     color: white;
-    font-size: 16px;
+    font-size: 20px;
     font-weight: bold;
     margin-top: 10px;
   }
@@ -332,9 +331,6 @@ h1 {
 }
 
 #startup {
-  top: 5%;
-  padding: 20px;
-
   h1 {
     font-size: 40px;
   }
@@ -345,6 +341,7 @@ h1 {
 
   button {
     margin-top: 25px;
+    margin-bottom: 25px;
   }
 }
 

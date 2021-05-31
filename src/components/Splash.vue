@@ -1,6 +1,8 @@
 <template>
     <div id="splash-container">
-        <slot></slot>
+        <div id="splash-grid">
+            <slot></slot>
+        </div>
     </div>
 </template>
 
@@ -16,10 +18,16 @@ export default {
     top: 0;
     background: #333;
     width: 100%;
-    height: 108vh;
+    height: 100vh;
     color: #FFB74D;
     left: 0;
     font-weight: bold;
+
+    #splash-grid {
+        height: 100%;
+        display: grid;
+        align-items: center;
+    }
 }
 
 @media (min-width: 600px) {
