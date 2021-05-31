@@ -39,7 +39,8 @@
       </div>
       <Splash v-if="showNewLevel">
         <div class="splashscreen" id="levelup">
-          LEVEL UP <span id="level">{{ level }}</span>
+          <span>LEVEL UP</span>
+          <span id="level">{{ level }}</span>
         </div>
       </Splash>
 
@@ -318,12 +319,20 @@ h1 {
   }
 }
 
-#levelup #level {
-  position: relative;
-  color: #039BE5;
-  font-size: 80px;
-  margin-left: 10px;
-  top: 11px;
+#levelup {
+  width: 230px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 170px 60px;
+  align-items: center;
+
+  #level {
+    position: relative;
+    color: #039BE5;
+    font-size: 80px;
+  }
 }
 
 #gameover {

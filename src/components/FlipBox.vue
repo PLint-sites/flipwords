@@ -89,6 +89,10 @@ export default {
     grid-template-rows: 1fr;
     align-items: center;
 
+    &>span {
+        word-break: break-word;
+    }
+
     &.correct, &.incorrect {
         span {
             opacity: 0.5;
@@ -110,6 +114,12 @@ export default {
         content: '\00D7';
         margin-top: -33px;
     }
+}
 
+@media (min-width: 600px) {
+    .box {
+        /* 573 - 160 = 413*/
+        height: calc(413px/5);
+    }
 }
 </style>
