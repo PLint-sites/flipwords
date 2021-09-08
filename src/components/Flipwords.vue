@@ -64,14 +64,10 @@ const NUMBER_OF_STARTING_LIVES = 3
 export default {
   name: 'Flipwords',
   components: {FlipBox, Splash},
+  props: ['wordsForLevel', 'remainingNumberOfWords'],
   data() {
     return {
-      allTheWords: words,
-      boxes: {
-        rows: 5,
-        cols: 2,
-      },
-      flattenedWords: [],
+      flattenedWords: this.wordsForLevel,
       selectedBoxes: [],
       lives: NUMBER_OF_STARTING_LIVES,
       points: 0,
@@ -111,31 +107,12 @@ export default {
       return false
     },
   },
+  watch: {
+    wordsForLevel(newList) {
+      this.flattenedWords = newList
+    }
+  },
   methods: {
-    init() {
-      const flattenedWordsArray = []
-      const randomWordsFromList = this.randomPickFromList()
-      randomWordsFromList.forEach(({english, translation}) => {
-        flattenedWordsArray.push({
-          word: english, 
-          type: 'en', 
-          selected: false,
-          flipping: false,
-          correct: null,
-        })
-        flattenedWordsArray.push({
-          word: translation, 
-          type: 'nl', 
-          selected: false,
-          flipping: false,
-          correct: null,
-        })
-      })
-      this.flattenedWords = this.shuffle(flattenedWordsArray)
-    },
-    shuffle(array) {
-      return array.sort(() => Math.random() - 0.5);
-    },
     waitFor(delay = 500) {
       return new Promise((resolve, reject) => {
         setTimeout(resolve, delay)
@@ -158,7 +135,7 @@ export default {
       this.selectedBoxes = []
 
       // continue if level completed
-      if (this.flattenedWords.length === 0 && this.allTheWords.length === 0) {
+      if (this.flattenedWords.length === 0 && this.remainingNumberOfWords === 0) {
         this.gameCompleted = true
       }
 
@@ -216,7 +193,7 @@ export default {
       this.showNewLevel = false
 
       // init arrays again
-      this.init()
+      this.$emit('get-new-words')
     },
     async reset() {
       await this.waitFor()
@@ -224,24 +201,8 @@ export default {
       this.lives = NUMBER_OF_STARTING_LIVES
       this.points = 0
       this.selectedBoxes = []
-      this.init()
+      this.$emit('reset-words-on-game-over')
     },
-    randomPickFromList() {
-      const numberToPick = this.boxes.cols * this.boxes.rows / 2
-      const selectedWordsFromList = this.shuffle(this.allTheWords).slice(0, numberToPick)
-      // remove them from allTheWords
-      this.allTheWords = this.allTheWords.filter(word => {
-        // indien word in selectedWordsFromList return false
-        if (selectedWordsFromList.find(item => item.english === word.english)) {
-          return false
-        }
-        return true
-      })
-      return selectedWordsFromList
-    },
-  },
-  mounted() {
-    this.init()
   },
 }
 </script>

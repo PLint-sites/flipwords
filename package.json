@@ -4,19 +4,27 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build"
+    "build": "vue-cli-service build",
+    "test:e2e": "vue-cli-service test:e2e",
+    "test:comp": "npx cypress open-ct"
   },
   "dependencies": {
     "@tweenjs/tween.js": "^18.6.4",
-    "core-js": "^3.16.1",
+    "chai-colors": "^1.0.1",
+    "core-js": "^3.17.2",
     "less": "^4.1.1",
     "less-loader": "^7.3.0",
     "vue": "^2.6.14"
   },
   "devDependencies": {
+    "@cypress/vue": "^2.2.3",
+    "@cypress/webpack-dev-server": "^1.5",
     "@vue/cli-plugin-babel": "^4.5.13",
+    "@vue/cli-plugin-e2e-cypress": "^4.5.13",
     "@vue/cli-service": "^4.5.13",
-    "vue-template-compiler": "^2.6.14"
+    "cypress": "^8.3.1",
+    "vue-template-compiler": "^2.6.14",
+    "webpack-dev-server": "^4.1"
   },
   "browserslist": [
     "> 1%",
