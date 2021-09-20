@@ -16,7 +16,7 @@
         <div class="splashscreen" id="startup">
           <h1>Flip Words</h1>
           <p>
-            Zoek de engelse en Nederlandse woorden bij elkaar en haal zo veel mogelijk punten. <br><br>
+            Zoek de Engelse en Nederlandse woorden bij elkaar en haal zo veel mogelijk punten. <br><br>
             Klik een blauw (Engels) en oranje (Nederlands) woord aan om ze te laten flippen!
           </p>
           <button type="button" @click="start">Start game</button>
