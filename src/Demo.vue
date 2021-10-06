@@ -1,5 +1,8 @@
 <template>
     <div id="demo">
+        <div id="back-link">
+            &laquo; <a href="https://plint-demos.nl" title="Back to PLint's Playground">PLint's Playground</a>
+        </div>
         <div id="phone">
             <div id="container">
                 <Flipwords 
@@ -88,6 +91,20 @@ export default {
     display: grid;
     place-items: center;
     height: 100vh;
+    grid-template-rows: 1fr 50px;
+
+    #back-link {
+        grid-row-start: 2;
+        border-top: 1px solid #FFB74D;
+        width: 100%;
+        height: 50px;
+        line-height: 50px;
+
+        a {
+            color: #0277BD;
+            font-weight: bold;
+        }
+    }
 
     #phone {
         width: 100%;
@@ -108,6 +125,12 @@ export default {
         background-image: url(assets/background-dictionary.jpg);
         background-size: cover;
         background-position: 50% 50%;
+        grid-template-rows: 50px 1fr;
+
+        #back-link {
+            grid-row-start: 1;
+            border-top: none;            
+        }
 
         #phone {
             background-image: url(assets/smartphone-350.png);

@@ -24,7 +24,7 @@ export default {
     font-weight: bold;
 
     #splash-grid {
-        height: 100%;
+        height: calc(100% - 50px);
         display: grid;
         align-items: center;
     }
@@ -33,6 +33,10 @@ export default {
 @media (min-width: 600px) {
     #splash-container {
         height: 100%;
+
+        #splash-grid {
+            height: 100%;
+        }
     }
 }
 </style>
