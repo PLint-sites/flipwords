@@ -56,8 +56,8 @@
 
 <script>
 import words from '@/words/list'
-import FlipBox from './FlipBox'
-import Splash from './Splash'
+import FlipBox from './FlipBox.vue'
+import Splash from './Splash.vue'
 
 const NUMBER_OF_STARTING_LIVES = 3
 

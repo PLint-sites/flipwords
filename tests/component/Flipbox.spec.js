@@ -1,4 +1,4 @@
-import { mount } from '@cypress/vue'
+import { mount } from 'cypress/vue2'
 import FlipBox from '../../src/components/FlipBox.vue'
 import chaiColors from 'chai-colors'
 chai.use(chaiColors);
