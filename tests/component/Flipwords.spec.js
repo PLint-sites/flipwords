@@ -1,4 +1,4 @@
-import { mount } from 'cypress/vue2'
+import { mount } from 'cypress/vue'
 import Flipwords from '../../src/components/Flipwords.vue'
 
 const wordBox = {
@@ -11,7 +11,7 @@ const wordBox = {
 
 beforeEach(() => {
     mount(Flipwords, {
-        propsData: {
+        props: {
             remainingNumberOfWords: 101,
             wordsForLevel: [
                 {
@@ -89,7 +89,7 @@ it('Checks correct and wrong match', () => {
     cy.get('@lives').should('have.text', 'Lives: 2')
 })
 
-it.only('Shows game over screen', () => {
+it('Shows game over screen', () => {
     cy.get('@lives').should('have.text', 'Lives: 3')
 
     // First wrong match

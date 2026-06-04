@@ -1,4 +1,4 @@
-import { mount } from 'cypress/vue2'
+import { mount } from 'cypress/vue'
 import FlipBox from '../../src/components/FlipBox.vue'
 
 const word = {
@@ -12,7 +12,7 @@ const word = {
 describe('Mounting FlipBox component with a Dutch word', () => {
     it('is not selected', () => {
         mount(FlipBox, {
-            propsData: {
+            props: {
                 word
             }
         })
@@ -24,7 +24,7 @@ describe('Mounting FlipBox component with a Dutch word', () => {
 
     it('is selected', () => {
         mount(FlipBox, {
-            propsData: {
+            props: {
                 word: {
                     ...word,
                     selected: true
@@ -40,7 +40,7 @@ describe('Mounting FlipBox component with a Dutch word', () => {
 describe('Mounting FlipBox component with an English word', () => {
     it('is not selected', () => {
         mount(FlipBox, {
-            propsData: {
+            props: {
                 word: {
                     ...word,
                     type: 'en',
@@ -56,7 +56,7 @@ describe('Mounting FlipBox component with an English word', () => {
 
     it('is selected', () => {
         mount(FlipBox, {
-            propsData: {
+            props: {
                 word: {
                     ...word,
                     type: 'en',
@@ -74,7 +74,7 @@ describe('Mounting FlipBox component with an English word', () => {
 describe('Mounting a word and check correct', () => {
     it('is selected and correct', () => {
         mount(FlipBox, {
-            propsData: {
+            props: {
                 word: {
                     ...word,
                     selected: true,
@@ -94,7 +94,7 @@ describe('Mounting a word and check correct', () => {
 
     it('is selected and incorrect', () => {
         mount(FlipBox, {
-            propsData: {
+            props: {
                 word: {
                     ...word,
                     selected: true,
