@@ -4,77 +4,105 @@
     </div>
 </template>
 
-<script>
-import TWEEN from '@tweenjs/tween.js';
+<script setup>
+import { computed, onBeforeUnmount, ref, toRefs, watch } from 'vue'
+import TWEEN from '@tweenjs/tween.js'
 
-export default {
-    name: 'FlipBox',
-    props: ['word'],
-    data() {
-        return {
-            colors: {
-                orange: '#FFB74D',
-                orangedark: '#EF6C00',
-                blue: '#039BE5',
-                bluedark: '#0277BD',
-                green: '#43A047',
-                red: '#E53935',
-            },
-            boxRotateY: 0,
-        }
+const props = defineProps({
+    word: {
+        type: Object,
+        required: true,
     },
-    computed: {
-        doosStyle() {
-            let backgroundColor = this.colors.orange
-            if (this.word.type === 'en') {
-                backgroundColor = this.colors.blue
-            }
-            if (this.word.selected) {
-                backgroundColor = this.colors['orangedark']
-                if (this.word.type === 'en') {
-                    backgroundColor = this.colors['bluedark']
-                }
-            }
-            if (this.word.correct === true) {
-                backgroundColor = this.colors.green
-            }
-            if (this.word.correct === false) {
-                backgroundColor = this.colors.red
-            }
-            return {
-                color: '#ffffff',
-                transform: `rotateY(${this.boxRotateY}deg)`,
-                '--bg-color': backgroundColor,
-            }
-        },
+})
 
-    },
-    methods: {
-        rot(start, end) {
-            function animate(time) {
-                requestAnimationFrame(animate);
-                TWEEN.update(time);
-            }
-            requestAnimationFrame(animate);
+const emit = defineEmits(['selected'])
+const { word } = toRefs(props)
 
-            const rotateBox = { pos: start };
-            new TWEEN.Tween(rotateBox)
-                .to({ pos: end }, 250)
-                .onUpdate(() => { this.boxRotateY = rotateBox.pos; })
-                .start()
-        },
-        select() {
-            this.$emit('selected')
-        },
-    },
-    watch: {
-        'word.flipping': function(isFlipping) {
-            if (isFlipping) {
-                this.rot(0, 360)
-            }
-        },
-    },
+const colors = {
+    orange: '#FFB74D',
+    orangedark: '#EF6C00',
+    blue: '#039BE5',
+    bluedark: '#0277BD',
+    green: '#43A047',
+    red: '#E53935',
 }
+
+const boxRotateY = ref(0)
+let animationFrameId = null
+
+const doosStyle = computed(() => {
+    let backgroundColor = colors.orange
+
+    if (word.value.type === 'en') {
+        backgroundColor = colors.blue
+    }
+
+    if (word.value.selected) {
+        backgroundColor = colors.orangedark
+        if (word.value.type === 'en') {
+            backgroundColor = colors.bluedark
+        }
+    }
+
+    if (word.value.correct === true) {
+        backgroundColor = colors.green
+    }
+
+    if (word.value.correct === false) {
+        backgroundColor = colors.red
+    }
+
+    return {
+        color: '#ffffff',
+        transform: `rotateY(${boxRotateY.value}deg)`,
+        '--bg-color': backgroundColor,
+    }
+})
+
+function rot(start, end) {
+    if (animationFrameId !== null) {
+        cancelAnimationFrame(animationFrameId)
+        animationFrameId = null
+    }
+
+    const rotateBox = { pos: start }
+    const tween = new TWEEN.Tween(rotateBox)
+        .to({ pos: end }, 250)
+        .onUpdate(() => {
+            boxRotateY.value = rotateBox.pos
+        })
+        .start()
+
+    const animate = (time) => {
+        if (tween.update(time)) {
+            animationFrameId = requestAnimationFrame(animate)
+        } else {
+            animationFrameId = null
+        }
+    }
+
+    animationFrameId = requestAnimationFrame(animate)
+}
+
+function select() {
+    emit('selected')
+}
+
+watch(
+    () => word.value.flipping,
+    (isFlipping) => {
+        if (isFlipping) {
+            rot(0, 360)
+        }
+    }
+)
+
+onBeforeUnmount(() => {
+    if (animationFrameId !== null) {
+        cancelAnimationFrame(animationFrameId)
+        animationFrameId = null
+    }
+})
 </script>
 
 <style lang="less" scoped>
@@ -84,16 +112,17 @@ export default {
     background: var(--bg-color);
     font-weight: bold;
     box-sizing: border-box;
-    
+
     display: grid;
     grid-template-rows: 1fr;
     align-items: center;
 
-    &>span {
+    & > span {
         word-break: break-word;
     }
 
-    &.correct, &.incorrect {
+    &.correct,
+    &.incorrect {
         span {
             opacity: 0.5;
         }
@@ -118,7 +147,7 @@ export default {
 
 @media (min-width: 600px) {
     .box {
-        /* 573 - 160 = 413*/
+        /* 573 - 160 = 413 */
         height: calc(413px/5);
     }
 }
