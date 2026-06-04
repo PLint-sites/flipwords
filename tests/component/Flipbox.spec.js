@@ -1,7 +1,5 @@
 import { mount } from 'cypress/vue2'
 import FlipBox from '../../src/components/FlipBox.vue'
-import chaiColors from 'chai-colors'
-chai.use(chaiColors);
 
 const word = {
     correct: null,
@@ -21,8 +19,7 @@ describe('Mounting FlipBox component with a Dutch word', () => {
 
         cy.contains('.box', 'Angstig')
         cy.get('.box')
-            .should('have.css', 'background-color')
-            .and('be.colored', '#ffb74d')
+            .should('have.css', 'background-color', 'rgb(255, 183, 77)')
     })
 
     it('is selected', () => {
@@ -36,8 +33,7 @@ describe('Mounting FlipBox component with a Dutch word', () => {
         })
 
         cy.get('.box')
-            .should('have.css', 'background-color')
-            .and('be.colored', '#ef6c00')
+            .should('have.css', 'background-color', 'rgb(239, 108, 0)')
     })
 })
 
@@ -55,8 +51,7 @@ describe('Mounting FlipBox component with an English word', () => {
 
         cy.contains('.box', 'Anxious')
         cy.get('.box')
-            .should('have.css', 'background-color')
-            .and('be.colored', '#039BE5')
+            .should('have.css', 'background-color', 'rgb(3, 155, 229)')
     })
 
     it('is selected', () => {
@@ -72,8 +67,7 @@ describe('Mounting FlipBox component with an English word', () => {
         })
 
         cy.get('.box')
-            .should('have.css', 'background-color')
-            .and('be.colored', '#0277BD')
+            .should('have.css', 'background-color', 'rgb(2, 119, 189)')
     })
 })
 
@@ -95,8 +89,7 @@ describe('Mounting a word and check correct', () => {
                 const className = $box[0].className
                 expect(className).to.contain('correct')
             })
-            .should('have.css', 'background-color')
-            .and('be.colored', '#43a047')
+            .should('have.css', 'background-color', 'rgb(67, 160, 71)')
     })
 
     it('is selected and incorrect', () => {
@@ -116,7 +109,6 @@ describe('Mounting a word and check correct', () => {
                 const className = $box[0].className
                 expect(className).to.contain('incorrect')
             })
-            .should('have.css', 'background-color')
-            .and('be.colored', '#e53935')
+            .should('have.css', 'background-color', 'rgb(229, 57, 53)')
     })
 })

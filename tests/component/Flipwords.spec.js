@@ -1,7 +1,5 @@
 import { mount } from 'cypress/vue2'
 import Flipwords from '../../src/components/Flipwords.vue'
-import chaiColors from 'chai-colors'
-chai.use(chaiColors);
 
 const wordBox = {
     correct: null,
@@ -99,8 +97,7 @@ it.only('Shows game over screen', () => {
     cy.get('.box:nth-child(9)').click()
     
     cy.get('.box:nth-child(-n+5)')
-        .should('have.css', 'background-color')
-        .and('be.colored', '#039BE5')
+        .should('have.css', 'background-color', 'rgb(3, 155, 229)')
     .then(() => {
         cy.get('@lives').should('have.text', 'Lives: 2')
 
@@ -110,8 +107,7 @@ it.only('Shows game over screen', () => {
     })
 
     cy.get('.box:nth-child(-n+5)')
-        .should('have.css', 'background-color')
-        .and('be.colored', '#039BE5')
+        .should('have.css', 'background-color', 'rgb(3, 155, 229)')
     .then(() => {
         cy.get('@lives').should('have.text', 'Lives: 1')
 
