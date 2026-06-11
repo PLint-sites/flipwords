@@ -1,209 +1,209 @@
 <template>
-  <div>
-    <Splash v-if="gameCompleted">
-      <div class="splashscreen" id="startup">
-        <h1>Well done!</h1>
-        <div style="width:100%;height:0;padding-bottom:45%;position:relative;">
-          <iframe src="https://giphy.com/embed/zGnnFpOB1OjMQ" width="100%" height="100%" style="position:absolute; left:0; width:100%; box-sizing:border-box;" frameBorder="0" class="giphy-embed" allowFullScreen>
-          </iframe>
-        </div>
-        <p>You completed all words!</p>
-        <h2>Score: {{ points }}</h2>
-      </div>
-    </Splash>
-    <template v-else>
+    <div>
+        <Splash v-if="gameCompleted">
+            <div class="splashscreen" id="startup">
+                <h1>Well done!</h1>
+                <div style="width:100%;height:0;padding-bottom:45%;position:relative;">
+                    <iframe src="https://giphy.com/embed/zGnnFpOB1OjMQ" width="100%" height="100%" style="position:absolute; left:0; width:100%; box-sizing:border-box;" frameBorder="0" class="giphy-embed" allowFullScreen>
+                    </iframe>
+                </div>
+                <p>You completed all words!</p>
+                <h2>Score: {{ points }}</h2>
+            </div>
+        </Splash>
+        <template v-else>
         <Splash v-if="showStartUp">
-        <div class="splashscreen" id="startup">
-          <h1>Flip Words</h1>
-          <p>
-            Zoek de Engelse en Nederlandse woorden bij elkaar en haal zo veel mogelijk punten. <br><br>
-            Klik een blauw (Engels) en oranje (Nederlands) woord aan om ze te laten flippen!
-          </p>
-          <button type="button" @click="start">Start game</button>
+            <div class="splashscreen" id="startup">
+                <h1>Flip Words</h1>
+                <p>
+                    Zoek de Engelse en Nederlandse woorden bij elkaar en haal zo veel mogelijk punten. <br><br>
+                    Klik een blauw (Engels) en oranje (Nederlands) woord aan om ze te laten flippen!
+                </p>
+                <button type="button" @click="start">Start game</button>
+            </div>
+        </Splash>
+        <div v-else>
+            <h1>Flip Words</h1>
+            <div id="scoreboard">
+                <span>Lives: {{ lives }}</span>
+                <span>Points: {{ points }}</span>
+            </div>
+            <div v-if="flattenedWords.length" class="grid">
+                <FlipBox
+                    v-for="i in numberWordsRemaining"
+                    :key="`box_${i}`"
+                    :word="flattenedWords[i - 1]"
+                    @selected="selectWord(i - 1)"
+                />
+            </div>
+            <h3>Level {{ level }}</h3>
         </div>
-      </Splash>
-      <div v-else>
-        <h1>Flip Words</h1>
-        <div id="scoreboard">
-          <span>Lives: {{ lives }}</span>
-          <span>Points: {{ points }}</span>
-        </div>
-        <div v-if="flattenedWords.length" class="grid">
-          <FlipBox v-for="i in numberWordsRemaining" 
-            :key="`box_${i}`" 
-            :word="flattenedWords[i-1]" 
-            @selected="selectWord(i-1)"
-          />
-        </div>
-        <h3>Level {{ level }}</h3>
-      </div>
-      <Splash v-if="showNewLevel">
-        <div class="splashscreen" id="levelup">
-          <span>LEVEL UP</span>
-          <span id="level">{{ level }}</span>
-        </div>
-      </Splash>
+        <Splash v-if="showNewLevel">
+            <div class="splashscreen" id="levelup">
+                <span>LEVEL UP</span>
+                <span id="level">{{ level }}</span>
+            </div>
+        </Splash>
 
-      <Splash v-if="showGameOver">
-        <div class="splashscreen" id="gameover">
-          GAME OVER
-          <button type="button" @click="reset">Play again?</button>
-        </div>
-      </Splash>
-    </template>
-  </div>
+        <Splash v-if="showGameOver">
+            <div class="splashscreen" id="gameover">
+                GAME OVER
+                <button type="button" @click="reset">Play again?</button>
+            </div>
+        </Splash>
+        </template>
+    </div>
 </template>
 
-<script>
+<script setup>
+import { computed, ref, watch } from 'vue'
 import words from '@/words/list'
 import FlipBox from './FlipBox.vue'
 import Splash from './Splash.vue'
 
 const NUMBER_OF_STARTING_LIVES = 3
 
-export default {
-  name: 'Flipwords',
-  components: {FlipBox, Splash},
-  props: ['wordsForLevel', 'remainingNumberOfWords'],
-  data() {
-    return {
-      flattenedWords: this.wordsForLevel,
-      selectedBoxes: [],
-      lives: NUMBER_OF_STARTING_LIVES,
-      points: 0,
-      level: 1,
-      showStartUp: true,
-      showNewLevel: false,
-      showGameOver: false,
-      gameCompleted: false,
+const props = defineProps({
+    wordsForLevel: {
+        type: Array,
+        required: true,
+    },
+    remainingNumberOfWords: {
+        type: Number,
+        required: true,
+    },
+})
+
+const emit = defineEmits(['get-new-words', 'reset-words-on-game-over'])
+
+const flattenedWords = ref(props.wordsForLevel)
+const selectedBoxes = ref([])
+const lives = ref(NUMBER_OF_STARTING_LIVES)
+const points = ref(0)
+const level = ref(1)
+const showStartUp = ref(true)
+const showNewLevel = ref(false)
+const showGameOver = ref(false)
+const gameCompleted = ref(false)
+
+const numberWordsRemaining = computed(() => flattenedWords.value.length)
+const numberSelectedBoxes = computed(() => selectedBoxes.value.length)
+const isCombiWorthChecking = computed(() => {
+    if (numberSelectedBoxes.value !== 2) {
+        return false
     }
-  },
-  computed: {
-    numberWordsRemaining() {
-      return this.flattenedWords.length
-    },
-    numberSelectedBoxes() {
-      return this.selectedBoxes.length
-    },
-    isCombiWorthChecking() {
-      if (this.numberSelectedBoxes !== 2) return false
-      const enLength = this.selectedBoxes.filter(word => word.type === 'en').length
-      const nlLength = this.selectedBoxes.filter(word => word.type === 'nl').length
-      if (enLength === nlLength) {
-        return true
-      }
-      return false
-    },
-    isCombiCorrect() {
-      if (this.isCombiWorthChecking) {
-        const enWord = this.selectedBoxes.filter(word => word.type === 'en').pop()
-        const nlWord = this.selectedBoxes.filter(word => word.type === 'nl').pop()
-        // find english word in list
-        const indexInList = words.findIndex(word => word.english === enWord.word)
-        if (indexInList > -1 && words[indexInList].translation === nlWord.word) {
-          return true
-        }
-      }
-      return false
-    },
-  },
-  watch: {
-    wordsForLevel(newList) {
-      this.flattenedWords = newList
+
+    const enLength = selectedBoxes.value.filter((word) => word.type === 'en').length
+    const nlLength = selectedBoxes.value.filter((word) => word.type === 'nl').length
+
+    return enLength === nlLength
+})
+
+const isCombiCorrect = computed(() => {
+    if (!isCombiWorthChecking.value) {
+        return false
     }
-  },
-  methods: {
-    waitFor(delay = 500) {
-      return new Promise((resolve, reject) => {
+
+    const enWord = selectedBoxes.value.filter((word) => word.type === 'en').pop()
+    const nlWord = selectedBoxes.value.filter((word) => word.type === 'nl').pop()
+    const indexInList = words.findIndex((word) => word.english === enWord.word)
+
+    return indexInList > -1 && words[indexInList].translation === nlWord.word
+})
+
+watch(
+    () => props.wordsForLevel,
+    (newList) => {
+        flattenedWords.value = newList
+    }
+)
+
+function waitFor(delay = 500) {
+    return new Promise((resolve) => {
         setTimeout(resolve, delay)
-      })
-    },
-    markWordAsSelected(i) {
-      this.selectedBoxes.push(this.flattenedWords[i])
-      this.flattenedWords[i].selected = true
-    },
-    async handleCorrect() {
-      await this.waitFor()
-      this.flattenedWords = this.flattenedWords.map(word => ({...word, correct: (word.flipping ? true : null)}))
-      this.points++
+    })
+}
 
-      // na een timeout van 1 seconde, verwijder woorden uit het grid
-      await this.waitFor(1000)
-      this.flattenedWords = this.flattenedWords.filter(word => !word.correct)
+function markWordAsSelected(index) {
+    selectedBoxes.value.push(flattenedWords.value[index])
+    flattenedWords.value[index].selected = true
+}
 
-      // clear selected boxes
-      this.selectedBoxes = []
+async function handleCorrect() {
+    await waitFor()
+    flattenedWords.value = flattenedWords.value.map((word) => ({ ...word, correct: word.flipping ? true : null }))
+    points.value += 1
 
-      // continue if level completed
-      if (this.flattenedWords.length === 0 && this.remainingNumberOfWords === 0) {
-        this.gameCompleted = true
-      }
+    await waitFor(1000)
+    flattenedWords.value = flattenedWords.value.filter((word) => !word.correct)
+    selectedBoxes.value = []
 
-      if (this.flattenedWords.length === 0) {
-        this.levelUp()
-      }
-    },
-    async handleIncorrect() {
-      await this.waitFor()
-      this.flattenedWords = this.flattenedWords.map(word => ({...word, correct: (word.flipping ? false : null)}))
-      this.lives--
+    if (flattenedWords.value.length === 0 && props.remainingNumberOfWords === 0) {
+        gameCompleted.value = true
+    }
 
-      if (this.lives > 0) {
-        // flip back
-        await this.waitFor(1000)
-        this.flattenedWords = this.flattenedWords.map(word => ({...word, flipping: false, selected: false, correct: null}))
-        this.selectedBoxes = []
-      } else {
-        this.showGameOver = true
-      }
-    },
-    selectWord(i) {
-      if (this.numberSelectedBoxes < 2) {
-        // check if [i] not in selectedBoxes
-        
-        // Only continue if this is the first box or, if second box, it is not the same or from same type
-        if (this.selectedBoxes.length === 0 || (this.selectedBoxes.length === 1 && this.selectedBoxes[0].type !== this.flattenedWords[i].type)) {
-          this.markWordAsSelected(i)
+    if (flattenedWords.value.length === 0) {
+        levelUp()
+    }
+}
 
-          if (this.numberSelectedBoxes === 2) {
-            // start flipping
-            this.flattenedWords = this.flattenedWords.map(word => ({...word, flipping: word.selected}))
+async function handleIncorrect() {
+    await waitFor()
+    flattenedWords.value = flattenedWords.value.map((word) => ({ ...word, correct: word.flipping ? false : null }))
+    lives.value -= 1
 
-            // check if correct
-            if (this.isCombiWorthChecking) {
+    if (lives.value > 0) {
+        await waitFor(1000)
+        flattenedWords.value = flattenedWords.value.map((word) => ({ ...word, flipping: false, selected: false, correct: null }))
+        selectedBoxes.value = []
+    } else {
+        showGameOver.value = true
+    }
+}
 
-              if (this.isCombiCorrect) {
-                this.handleCorrect()
-              } else {
-                this.handleIncorrect()
-              }
+function selectWord(index) {
+    if (numberSelectedBoxes.value < 2) {
+        const firstSelected = selectedBoxes.value[0]
+        const canSelectSecond = selectedBoxes.value.length === 1 && firstSelected.type !== flattenedWords.value[index].type
+
+        if (selectedBoxes.value.length === 0 || canSelectSecond) {
+            markWordAsSelected(index)
+
+            // marking as selected now increases the number of selected boxes.
+
+            if (numberSelectedBoxes.value === 2) {
+                flattenedWords.value = flattenedWords.value.map((word) => ({ ...word, flipping: word.selected }))
+                if (isCombiWorthChecking.value) {
+                    if (isCombiCorrect.value) {
+                        handleCorrect()
+                    } else {
+                        handleIncorrect()
+                    }
+                }
             }
-          }
-        } 
-      }
-    },
-    async start() {
-      this.showStartUp = false
-    },
-    async levelUp() {
-      this.level++
-      // Animate: `Level up: ${this.level}`
-      this.showNewLevel = true
-      await this.waitFor(2000)
-      this.showNewLevel = false
+        }
+    }
+}
 
-      // init arrays again
-      this.$emit('get-new-words')
-    },
-    async reset() {
-      await this.waitFor()
-      this.showGameOver = false
-      this.lives = NUMBER_OF_STARTING_LIVES
-      this.points = 0
-      this.selectedBoxes = []
-      this.$emit('reset-words-on-game-over')
-    },
-  },
+function start() {
+    showStartUp.value = false
+}
+
+async function levelUp() {
+    level.value += 1
+    showNewLevel.value = true
+    await waitFor(2000)
+    showNewLevel.value = false
+    emit('get-new-words')
+}
+
+async function reset() {
+    await waitFor()
+    showGameOver.value = false
+    lives.value = NUMBER_OF_STARTING_LIVES
+    points.value = 0
+    selectedBoxes.value = []
+    emit('reset-words-on-game-over')
 }
 </script>
 
@@ -211,120 +211,120 @@ export default {
 @orange: #FFB74D;
 
 #doos {
-  background: @orange;
-  width: 150px;
-  height: 120px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 20px;
-  padding-top: 35px;
-  box-sizing: border-box;
-  font-weight: bold;
+    background: @orange;
+    width: 150px;
+    height: 120px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+    padding-top: 35px;
+    box-sizing: border-box;
+    font-weight: bold;
 }
 
 a {
-  color: #42b983;
+    color: #42b983;
 }
 
 h1 {
-  font-size: 28px;
-  padding: 7px 0;
-  border-bottom: double 3px @orange;
-  margin-bottom: 7px;
+    font-size: 28px;
+    padding: 7px 0;
+    border-bottom: double 3px @orange;
+    margin-bottom: 7px;
 }
 
 .grid {
-  margin-top: 7px;
-  margin-bottom: 7px;
-  padding: 0 20px;
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 7px;
-  box-sizing: border-box;
-  align-items: center;
+    margin-top: 7px;
+    margin-bottom: 7px;
+    padding: 0 20px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 7px;
+    box-sizing: border-box;
+    align-items: center;
 }
 
 #scoreboard {
-  padding: 0 20px;
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 10px;
-  box-sizing: border-box;
+    padding: 0 20px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 10px;
+    box-sizing: border-box;
 
-  span {
-    text-transform: capitalize;
-    font-weight: bold;
-  }
+    span {
+        text-transform: capitalize;
+        font-weight: bold;
+    }
 }
 
 .splashscreen {
-  padding: 0 20px;  
-  position: relative;
-  font-size: 30px;
-  letter-spacing: 2px;
+    padding: 0 20px;
+    position: relative;
+    font-size: 30px;
+    letter-spacing: 2px;
 
-  button {
-    display: block;
-    background: #039BE5;
-    padding: 12px 20px;
-    border: 1px solid #0277BD;
-    margin-left: auto;
-    margin-right: auto;
-    width: 200px;
-    color: white;
-    font-size: 20px;
-    font-weight: bold;
-    margin-top: 10px;
-  }
+    button {
+        display: block;
+        background: #039BE5;
+        padding: 12px 20px;
+        border: 1px solid #0277BD;
+        margin-left: auto;
+        margin-right: auto;
+        width: 200px;
+        color: white;
+        font-size: 20px;
+        font-weight: bold;
+        margin-top: 10px;
+    }
 }
 
 #levelup {
-  width: 230px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 0;
-  display: grid;
-  grid-template-columns: 170px 60px;
-  align-items: center;
+    width: 230px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 170px 60px;
+    align-items: center;
 
-  #level {
-    position: relative;
-    color: #039BE5;
-    font-size: 80px;
-  }
+    #level {
+        position: relative;
+        color: #039BE5;
+        font-size: 80px;
+    }
 }
 
 #gameover {
-  color: #E53935;
+    color: #E53935;
 }
 
 #startup {
-  h1 {
-    font-size: 40px;
-  }
+    h1 {
+        font-size: 40px;
+    }
 
-  p {
-    font-size: 18px;
-  }
+    p {
+        font-size: 18px;
+    }
 
-  button {
-    margin-top: 25px;
-    margin-bottom: 25px;
-  }
+    button {
+        margin-top: 25px;
+        margin-bottom: 25px;
+    }
 }
 
 @media (min-width: 600px) {
-  h1 {
-    font-size: 28px;
-    padding: 7px 0;
-    margin-bottom: 7px;
-  }
+    h1 {
+        font-size: 28px;
+        padding: 7px 0;
+        margin-bottom: 7px;
+    }
 
-  .grid {
-    margin-top: 7px;
-    margin-bottom: 7px;
-  }
+    .grid {
+        margin-top: 7px;
+        margin-bottom: 7px;
+    }
 }
 </style>
