@@ -2,6 +2,7 @@ const { defineConfig } = require('cypress')
 
 module.exports = defineConfig({
   e2e: {
+    baseUrl: 'http://localhost:5173',
     specPattern: 'tests/e2e/specs/**/*.js',
     supportFile: 'tests/e2e/support/index.js',
     fixturesFolder: 'tests/e2e/fixtures',
@@ -10,9 +11,7 @@ module.exports = defineConfig({
   },
   component: {
     specPattern: 'tests/component/**/*.spec.js',
-    supportFile: false,
-    viewportHeight: 800,
-    viewportWidth: 500,
+    supportFile: 'cypress/support/component.js',
     devServer: {
       framework: 'vue',
       bundler: 'vite',

@@ -1,5 +1,3 @@
-// https://docs.cypress.io/api/introduction/api.html
-
 describe('Startscreen', () => {
   it('Contains title, explanation and button', () => {
     cy.visit('/')
